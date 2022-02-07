@@ -6,8 +6,16 @@ const authenticate = require('../authenticate');
 const router = express.Router();
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-    res.send('Respond with a resource');
+router
+    .route('/')
+    .get(function(req, res, next) {
+        if (req.user.admin) {
+            return User.find();
+        } else {
+            const err = new Error('Incorrect Administrator Account. Admin Only.');
+            err.status = 403;
+            return next(err);
+        }
 });
 
 router.post('/signup', (req, res) => {
