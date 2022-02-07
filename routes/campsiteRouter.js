@@ -176,6 +176,9 @@ campsiteRouter
   .put(authenticate.verifyUser, (req, res, next) => {
     Campsite.findById(req.params.campsiteId)
       .then(campsite => {
+
+        if (req.body.author.equals(req.user._id)) {
+
           if (campsite && campsite.comments.id(req.params.commentId)) {
               if (req.body.rating) {
                   campsite.comments.id(req.params.commentId).rating = req.body.rating;
@@ -198,13 +201,21 @@ campsiteRouter
               err = new Error(`Comment ${req.params.commentId} not found`);
               err.status = 404;
               return next(err);
-          }
+          } 
+        } else {
+          err.status = 403;
+          err = new Error('This user is not an authorized author for this comment.')
+        }
+        
       })
       .catch(err => next(err));
   })
   .delete(authenticate.verifyUser, (req, res, next) => {
     Campsite.findById(req.params.campsiteId)
       .then(campsite => {
+
+        if (req.body.author.equals(req.user._id)) {
+
           if (campsite && campsite.comments.id(req.params.commentId)) {
               campsite.comments.id(req.params.commentId).remove();
               campsite.save()
@@ -223,6 +234,10 @@ campsiteRouter
               err.status = 404;
               return next(err);
           }
+        } else {
+          err.status = 403;
+          err = new Error('You are not authorized to delete this comment.')
+        }
       })
       .catch(err => next(err));
   });
