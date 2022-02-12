@@ -29,7 +29,7 @@ campsiteRouter.route("/")
   })
   .put(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res) => {
     res.statusCode = 403;
-    res.end("PUT operation not supported on /campsites");
+    res.end("PUT operation is not supported on /campsites");
   })
   .delete(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
 
